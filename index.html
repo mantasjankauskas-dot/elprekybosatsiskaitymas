@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EPT - Užduotis</title>
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --accent:#ddd;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:28px;
+      padding:48px 16px;
+      box-sizing:border-box;
+    }
+    header{
+      text-align:center;
+      margin-top:8px;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:0.6px;
+      font-weight:700;
+    }
+    .meta{
+      margin-top:6px;
+      color:var(--accent);
+      font-weight:600;
+    }
+
+    /* clock container */
+    .clock-box{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:min(480px, 90vw);
+      height: min(480px, 90vw);
+      padding:20px;
+      box-sizing:border-box;
+    }
+
+    /* svg scales to container */
+    svg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    /* small caption under clock */
+    .caption{
+      color:var(--accent);
+      font-size:14px;
+      margin-top:8px;
+      text-align:center;
+    }
+
+    /* accessibility: hide if image only */
+    .sr-only{ position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; }
+
+    /* simple footer with hosting note (optional) */
+    footer{
+      margin-top:20px;
+      color:var(--accent);
+      font-size:13px;
+      text-align:center;
+      opacity:0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <!-- Pakeisk vardą čia arba script'e -->
+      <h1 id="userName">Egidijus Grigūnas</h1>
+      <div class="meta" id="metaLine">EPT, <span id="currentDate">2025-10-13</span></div>
+    </header>
+
+    <div class="clock-box" aria-label="Analoginis laikrodis rodantis dabartinį laiką">
+      <!-- SVG analoginis laikrodis; rankos valdomos JS -->
+      <svg viewBox="0 0 200 200" role="img" aria-labelledby="clockTitle clockDesc">
+        <title id="clockTitle">Analogiškas laikrodis</title>
+        <desc id="clockDesc">Baltas analoginis laikrodis ant juodo fono, rodo dabartinį laiką</desc>
+
+        <!-- fonas / ciferblatas -->
+        <circle cx="100" cy="100" r="95" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+        <!-- valandos žymės -->
+        <g id="ticks">
+          <!-- 12 žymų, paryškintos valandos -->
+          <!-- JS gali pridėti, bet paprasčiau statinės -->
+          <line x1="100" y1="12" x2="100" y2="24" stroke="#fff" stroke-width="3" />
+          <line x1="100" y1="188" x2="100" y2="176" stroke="#fff" stroke-width="3" />
+          <line x1="12" y1="100" x2="24" y2="100" stroke="#fff" stroke-width="3" />
+          <line x1="188" y1="100" x2="176" y2="100" stroke="#fff" stroke-width="3" />
+          <!-- kitos smulkesnės žymės -->
+          <!-- generuota JS būtų gražiau, bet keletas papildomų -->
+          <g stroke="#fff" stroke-width="1.2">
+            <line x1="146" y1="26" x2="139" y2="36"/>
+            <line x1="174" y1="54" x2="164" y2="61"/>
+            <line x1="174" y1="146" x2="164" y2="139"/>
+            <line x1="146" y1="174" x2="139" y2="164"/>
+            <line x1="54" y1="26" x2="61" y2="36"/>
+            <line x1="26" y1="54" x2="36" y2="61"/>
+            <line x1="54" y1="174" x2="61" y2="164"/>
+            <line x1="26" y1="146" x2="36" y2="139"/>
+          </g>
+        </g>
+
+        <!-- rankos grupė, centras (rotuojama su transform-origin centre) -->
+        <g id="hands" transform="translate(100,100)">
+          <!-- valandų ranka -->
+          <line id="hourHand" x1="0" y1="0" x2="0" y2="-45" stroke="#fff" stroke-width="4" stroke-linecap="round" transform="rotate(0)"/>
+          <!-- minučių ranka -->
+          <line id="minuteHand" x1="0" y1="0" x2="0" y2="-66" stroke="#fff" stroke-width="3" stroke-linecap="round" transform="rotate(0)"/>
+          <!-- sekundžių ranka -->
+          <line id="secondHand" x1="0" y1="10" x2="0" y2="-80" stroke="#fff" stroke-width="1.4" stroke-linecap="round" transform="rotate(0)"/>
+          <!-- centrinė sagutė -->
+          <circle cx="0" cy="0" r="3.8" fill="#fff" />
+        </g>
+
+      </svg>
+    </div>
+
+    <div class="caption">Laikrodis rodo realų laiką; data atnaujinama automatiškai.</div>
+
+    <footer>
+      Puslapio fragmentas: įkelti į savo Web serverį (pvz. /tarpinis katalogas).
+    </footer>
+  </div>
+
+  <script>
+    // --- Konfigūracija: pakeisk vardą jei reikia ---
+    const userName = "Egidijus Grigūnas"; // čia pakeisk į savo vardą/pavardę
+    const courseName = "EPT";
+
+    // --- Init: užpildome elementus ---
+    document.getElementById('userName').textContent = userName;
+    document.querySelector('.meta').innerHTML = courseName + ", <span id='currentDate'></span>";
+
+    // Funkcija, kuri atnaujina data stringą YYYY-MM-DD
+    function updateDateElement() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      document.getElementById('currentDate').textContent = yyyy + "-" + mm + "-" + dd;
+    }
+
+    // Funkcija, kuri atnaujina laikrodžio rankas
+    function updateClock() {
+      const now = new Date();
+
+      const seconds = now.getSeconds() + now.getMilliseconds()/1000;
+      const minutes = now.getMinutes() + seconds/60;
+      const hours = (now.getHours() % 12) + minutes/60;
+
+      const secondDeg = (seconds / 60) * 360;
+      const minuteDeg = (minutes / 60) * 360;
+      const hourDeg = (hours / 12) * 360;
+
+      // pritaikome transform rotacijas (SVG rankos grupėje centro koordinatės jau perkelta)
+      document.getElementById('secondHand').setAttribute('transform', 'rotate(' + secondDeg + ')');
+      document.getElementById('minuteHand').setAttribute('transform', 'rotate(' + minuteDeg + ')');
+      document.getElementById('hourHand').setAttribute('transform', 'rotate(' + hourDeg + ')');
+    }
+
+    // Paleidimas
+    updateDateElement();
+    updateClock();
+    // Atnaujinti sekundžių tikslumu (kad judėjimas būtų sklandus galima naudoti requestAnimationFrame,
+    // čia pakanka setInterval kas 100 ms)
+    setInterval(updateClock, 100);
+    // atnaujinti datą vidurnaktį - paprastam puslapiui užtenka tiesiog kas 60s patikrinti datą
+    setInterval(updateDateElement, 60*1000);
+  </script>
+</body>
+</html>
